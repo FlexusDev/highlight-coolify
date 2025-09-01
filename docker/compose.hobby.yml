@@ -3,8 +3,6 @@ services:
   clickhouse:
     image: clickhouse/clickhouse-server:23.11
     restart: on-failure
-    ports:
-      - '8123:8123'
     volumes:
       - highlight-data:/var/lib/clickhouse
     ulimits:
@@ -14,8 +12,6 @@ services:
   postgres:
     image: postgres:15
     restart: on-failure
-    ports:
-      - '5432:5432'
     volumes:
       - highlight-data:/var/lib/postgresql/data
     environment:
@@ -23,13 +19,9 @@ services:
   redis:
     image: redis:7.2.5
     restart: on-failure
-    ports:
-      - '6379:6379'
   zookeeper:
     image: bitnami/zookeeper:3.7
     restart: on-failure
-    ports:
-      - '2181:2181'
     volumes:
       - highlight-data:/bitnami
     environment:
@@ -37,9 +29,6 @@ services:
   kafka:
     image: bitnami/kafka:3.4.0
     restart: on-failure
-    ports:
-      - '9092:9092'
-      - '9093:9093'
     volumes:
       - highlight-data:/bitnami
     environment:
@@ -58,17 +47,12 @@ services:
     command: --config=/etc/otel-collector-config.yml
     volumes:
       - ./otel-collector-config.yml:/etc/otel-collector-config.yml
-    ports:
-      - '4318:4318'
-      - '4317:4317'
     depends_on:
       - clickhouse
   backend:
     container_name: backend
     image: ${BACKEND_IMAGE_NAME-ghcr.io/highlight/highlight-backend:latest}
     restart: on-failure
-    ports:
-      - '0.0.0.0:8082:8082'
     volumes:
       - highlight-data:/highlight-data
     env_file: .env
@@ -91,7 +75,6 @@ services:
     ports:
       - '0.0.0.0:3000:3000'
       - '0.0.0.0:6006:6006'
-      - '0.0.0.0:8080:8080'
     env_file: .env
     labels:
       - traefik.enable=true
